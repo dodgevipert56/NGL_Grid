@@ -2,6 +2,8 @@
 #define NGLSCENE_H_
 #include <ngl/Vec3.h>
 #include "WindowParams.h"
+#include <ngl/Transformation.h> // pos rot and scale
+#include <ngl/Mat4.h>
 // this must be included after NGL includes else we get a clash with gl libs
 #include <QOpenGLWindow>
 //----------------------------------------------------------------------------------------------------------------------
@@ -78,6 +80,10 @@ private:
     WinParams m_win;
     /// position for our model
     ngl::Vec3 m_modelPos;
+
+    ngl::Mat4 m_view;
+    ngl::Mat4 m_project;
+    void loadMatrixToShader(const ngl::Mat4 &_tx, const ngl::Vec4 &_colour);
 
 };
 
