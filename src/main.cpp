@@ -29,8 +29,15 @@ int main(int argc, char **argv)
   format.setProfile(QSurfaceFormat::CoreProfile);
   // now set the depth buffer to 24 bits
   format.setDepthBufferSize(24);
+
+  size_t numMeshes = 100;
+  if(argc > 1) // if arguments  more than 1 -
+  {
+      numMeshes = std::atoi(argv[1]); // - convert it to a string
+  }
+
   // now we are going to create our scene window
-  NGLScene window;
+  NGLScene window(numMeshes);
   // and set the OpenGL format
   window.setFormat(format);
   // we can now query the version to see if it worked

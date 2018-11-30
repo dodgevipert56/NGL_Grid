@@ -4,6 +4,7 @@
 #include "WindowParams.h"
 #include <ngl/Transformation.h> // pos rot and scale
 #include <ngl/Mat4.h>
+#include <ngl/AbstractVAO.h>
 // this must be included after NGL includes else we get a clash with gl libs
 #include <QOpenGLWindow>
 //----------------------------------------------------------------------------------------------------------------------
@@ -26,7 +27,7 @@ class NGLScene : public QOpenGLWindow
     /// @brief ctor for our NGL drawing class
     /// @param [in] parent the parent window to the class
     //----------------------------------------------------------------------------------------------------------------------
-    NGLScene();
+    NGLScene(size_t _numMeshes);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor must close down ngl and release OpenGL resources
     //----------------------------------------------------------------------------------------------------------------------
@@ -84,6 +85,41 @@ private:
     ngl::Mat4 m_view;
     ngl::Mat4 m_project;
     void loadMatrixToShader(const ngl::Mat4 &_tx, const ngl::Vec4 &_colour);
+    void loadMatrixToLineShader(const ngl::Mat4 &_tx);
+
+    enum class MeshType : char {TEAPOT, TROLL, CUBE, SPHERE}; // make it char to take less data
+
+    struct MeshData
+    {
+
+        ngl::Vec3 pos;   // no need _ cuz of lite data structures
+        ngl::Vec3 scale;
+        ngl::Vec3 rot;    // all this is a pod type
+        ngl::Vec4 colour;
+        MeshType type;
+        MeshData(const ngl::Vec3 &_pos, const ngl::Vec3 &_scale, // constructor intialisation
+                 const ngl::Vec3 &_rot, const ngl::Vec4 &_colour,
+                 MeshType _type) :
+            pos(_pos), scale(_scale), rot(_rot), colour(_colour),
+            type(_type){}
+        MeshData() = default;
+        MeshData(const MeshData &) = default;
+        ~MeshData() = default;
+
+    };
+    // no need to use smart pointers since its a pod type therefore can construct and destruct
+    std::vector<MeshData> m_meshes; // making object or instance
+    void createMeshes(); // not const becuz it a mutate
+
+    struct Vertex // represent vertex
+    {
+        ngl::Vec3 pos;
+        ngl::Vec4 colour;
+    };
+
+    void drawLines(const ngl::Mat4 & _tx);
+    std::unique_ptr<ngl::AbstractVAO> m_vao; // use this to populate data and draw
+
 
 };
 
