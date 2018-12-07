@@ -41,6 +41,7 @@ class NGLScene : public QOpenGLWindow
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
     void paintGL() override;
+    void timerEvent(QTimerEvent *_event) override;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this is called everytime we resize the window
     //----------------------------------------------------------------------------------------------------------------------
@@ -87,16 +88,19 @@ private:
     void loadMatrixToShader(const ngl::Mat4 &_tx, const ngl::Vec4 &_colour);
     void loadMatrixToLineShader(const ngl::Mat4 &_tx);
 
-    enum class MeshType : char {TEAPOT, TROLL, CUBE, SPHERE}; // make it char to take less data
+    enum class MeshType : char {TEAPOT, CUBE, SPHERE, TROLL}; // make it char to take less data
 
     struct MeshData
     {
 
         ngl::Vec3 pos;   // no need _ cuz of lite data structures
+        ngl::Vec3 dir;
         ngl::Vec3 scale;
         ngl::Vec3 rot;    // all this is a pod type
         ngl::Vec4 colour;
         MeshType type;
+        float distance;
+
         MeshData(const ngl::Vec3 &_pos, const ngl::Vec3 &_scale, // constructor intialisation
                  const ngl::Vec3 &_rot, const ngl::Vec4 &_colour,
                  MeshType _type) :
@@ -107,8 +111,10 @@ private:
         ~MeshData() = default;
 
     };
+
     // no need to use smart pointers since its a pod type therefore can construct and destruct
     std::vector<MeshData> m_meshes; // making object or instance
+    std::vector<std::vector<MeshData *>> m_collection;
     void createMeshes(); // not const becuz it a mutate
 
     struct Vertex // represent vertex
@@ -118,7 +124,14 @@ private:
     };
 
     void drawLines(const ngl::Mat4 & _tx);
+
+    void updateCollection();
+
+    void prune();
     std::unique_ptr<ngl::AbstractVAO> m_vao; // use this to populate data and draw
+
+    void addMesh(MeshType _m);
+    bool m_drawLines = true;
 
 
 };

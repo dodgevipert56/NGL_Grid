@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   // now set the depth buffer to 24 bits
   format.setDepthBufferSize(24);
 
-  size_t numMeshes = 100;
+  size_t numMeshes = 100;  // intialising it
   if(argc > 1) // if arguments  more than 1 -
   {
       numMeshes = std::atoi(argv[1]); // - convert it to a string
