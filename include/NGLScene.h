@@ -98,7 +98,7 @@ private:
         ngl::Vec3 scale;
         ngl::Vec3 rot;    // all this is a pod type
         ngl::Vec4 colour;
-        MeshType type;
+        MeshType type;  // select the type from the enum
         float distance;
 
         MeshData(const ngl::Vec3 &_pos, const ngl::Vec3 &_scale, // constructor intialisation
@@ -115,7 +115,9 @@ private:
     // no need to use smart pointers since its a pod type therefore can construct and destruct
     std::vector<MeshData> m_meshes; // making object or instance
     std::vector<std::vector<MeshData *>> m_collection;
-    void createMeshes(); // not const becuz it a mutate
+    std::unique_ptr<ngl::AbstractVAO> m_vao; // use this to populate data and draw
+
+    bool m_drawLines = true;
 
     struct Vertex // represent vertex
     {
@@ -124,14 +126,12 @@ private:
     };
 
     void drawLines(const ngl::Mat4 & _tx);
-
     void updateCollection();
-
-    void prune();
-    std::unique_ptr<ngl::AbstractVAO> m_vao; // use this to populate data and draw
-
     void addMesh(MeshType _m);
-    bool m_drawLines = true;
+    void prune();
+    void createMeshes(); // not const becuz it a mutate
+
+
 
 
 };

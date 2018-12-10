@@ -26,6 +26,7 @@ NGLScene::NGLScene(size_t _numMeshes)
   startTimer(10);
 }
 
+// this method is created so keypress can add more meshes
 void NGLScene::addMesh(MeshType _m)
 {
     ngl::Random *rng = ngl::Random::instance();
@@ -165,10 +166,10 @@ void NGLScene::paintGL()
       }
    }
 
+
    if(m_drawLines==true)
    {
-        //loadMatrixToLineShader(mouseRotation*tx.getMatrix());
-
+        loadMatrixToLineShader(mouseRotation*tx.getMatrix());
         drawLines(mouseRotation); // only same values
     }
 
@@ -225,7 +226,7 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   }
   // finally update the GLWindow and re-draw
 
-    update();
+    update(); //QT event
 }
 
 void NGLScene::updateCollection()
@@ -307,7 +308,7 @@ void NGLScene::drawLines(const ngl::Mat4 & _tx)
     //simpleVao is a string
     m_vao->setData(ngl::SimpleVAO::VertexData(line.size()*sizeof(Vertex), line[0].pos.m_x)); // how big is data and where it starts
 
-    m_vao->setVertexAttributePointer(0, 3, GL_FLOAT, sizeof(Vertex), 0);
+    m_vao->setVertexAttributePointer(0, 3, GL_FLOAT, sizeof(Vertex), 0); // connecting a line between 2 objects
     m_vao->setVertexAttributePointer(1, 4, GL_FLOAT, sizeof(Vertex), 3);
     m_vao->setNumIndices(line.size());
     loadMatrixToLineShader(_tx);
@@ -328,7 +329,7 @@ void NGLScene::prune()
         }
         else
         {
-            ++it;
+            ++it; //itereat through all meshes
         }
     }
 }
